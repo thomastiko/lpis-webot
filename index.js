@@ -13,15 +13,31 @@ const puppeteer = require("puppeteer");
 
   console.log("Navigated to the LPIS website.");
 
-  await page.click('.form-btn-blue');
+  // Klicke auf den Button, um einen neuen Tab zu öffnen
+  const [newPage] = await Promise.all([
+    new Promise(resolve => browser.once('targetcreated', target => resolve(target.page()))),
+    page.click('.form-btn-blue')
+  ]);
+  
   console.log("Clicked on the lpis button.");
 
-  await new Promise(resolve => setTimeout(resolve, 5000));
-
-  const htmlContent = await page.evaluate(() => document.documentElement.outerHTML);
+  // Warte darauf, dass die URL des neuen Tabs aktualisiert wird
+  await newPage.waitForFunction(() => window.location.href.includes('lpis.wu.ac.at'));
+  console.log("Current tab URL:", newPage.url()); // URL des aktuellen Tabs
   
-  // Ausgabe des HTML-Inhalts
-  console.log(htmlContent);
+  const inputSelector = 'input[type="text"][accesskey="u"]';
+  await newPage.waitForSelector(inputSelector);
+  await newPage.focus(inputSelector); // Fokussiere das Eingabefeld
+  await newPage.keyboard.type('12207319'); // Gib den gewünschten Text ein
 
-  await browser.close();
+  // Eingabe im Passwortfeld
+  const passwordInputSelector = 'input[type="password"][accesskey="p"]';
+  await newPage.waitForSelector(passwordInputSelector);
+  await newPage.type(passwordInputSelector, 'kbjP3yL/yd');
+
+  // Klicken auf den Login-Button
+  const loginButtonSelector = 'input[type="submit"][accesskey="l"]';
+  await newPage.click(loginButtonSelector);
+
+
 })();
