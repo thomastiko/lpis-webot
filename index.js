@@ -28,6 +28,23 @@ async function checkTimeAndLog(hour, minute) {
   });
 
   console.log("Navigated to the LPIS website.");
+  await new Promise((resolve) => setTimeout(resolve, 3000)); 
+  console.log("Waited for 3 seconds.");
+
+  const popupSelector = ".modal-content";
+  const cookiesSelector = ".form-btn.form-btn-secondary";
+
+const popupElement = await page.$(popupSelector);
+if (popupElement) {
+  console.log("Popup found. Clicking on cookies button.");
+  await page.waitForSelector(cookiesSelector);
+  await page.click(cookiesSelector);
+  console.log("Clicked on cookies button.");
+} else {
+  console.log("Popup not found. Proceeding with the rest of the script.");
+}
+
+
 
   const [newPage] = await Promise.all([
     new Promise((resolve) =>
