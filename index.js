@@ -65,7 +65,7 @@ async function checkTimeAndLog(hour, minute) {
     for (const td of tdElements) {
       const spanElements = td.querySelectorAll("span");
       for (const span of spanElements) {
-        if (span.innerText.trim() === "Personal, Führung, Organisation") /*Trage den Namen der LV hier ein */ {
+        if (span.innerText.trim() === "Personal, Führung, Organisation") /*Trage den Namen der LV hier ein! */ {
           const lvAnmeldenLink = td.querySelector(
             'a[title="Lehrveranstaltungsanmeldung"]'
           );
