@@ -63,12 +63,12 @@ if (popupElement) {
   const inputSelector = 'input[type="text"][accesskey="u"]';
   await newPage.waitForSelector(inputSelector);
   await newPage.focus(inputSelector); 
-  await newPage.keyboard.type("12207319"); // Gib deine Matrikelnummer hier ein
+  await newPage.keyboard.type("123456"); // Gib deine Matrikelnummer hier ein
 
   // Eingabe im Passwortfeld
   const passwordInputSelector = 'input[type="password"][accesskey="p"]';
   await newPage.waitForSelector(passwordInputSelector);
-  await newPage.type(passwordInputSelector, "kbjP3yL/yd"); // Gib dein Passwort hier ein
+  await newPage.type(passwordInputSelector, "Passwort123"); // Gib dein Passwort hier ein
 
   // Klicken auf den Login-Button
   const loginButtonSelector = 'input[type="submit"][accesskey="l"]';
