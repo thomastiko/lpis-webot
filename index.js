@@ -1,17 +1,17 @@
 const puppeteer = require("puppeteer");
 
-async function isCustomTime(hour, minute) {
+async function isCustomTime(hour, minute, second) {
   const now = new Date();
-  return now.getHours() === hour && now.getMinutes() === minute;
+  return now.getHours() === hour && now.getMinutes() === minute && now.getSeconds() === second;
 }
 
-async function checkTimeAndLog(hour, minute) {
+async function checkTimeAndLog(hour, minute, second) {
   while (true) {
-    if (await isCustomTime(hour, minute)) {
-      console.log(`It's ${hour}:${minute < 10 ? '0' + minute : minute} now!`);
+    if (await isCustomTime(hour, minute, second)) {
+      console.log(`It's ${hour}:${minute < 10 ? '0' + minute : minute}:${second < 10 ? '0' + second : second} now!`);
       break;
     } else {
-      console.log(`Current time is not ${hour}:${minute < 10 ? '0' + minute : minute}. Waiting...`);
+      console.log(`Current time is not ${hour}:${minute < 10 ? '0' + minute : minute}:${second < 10 ? '0' + second : second}. Waiting...`);
       await new Promise(resolve => setTimeout(resolve, 300));
     }
   }
@@ -63,12 +63,12 @@ if (popupElement) {
   const inputSelector = 'input[type="text"][accesskey="u"]';
   await newPage.waitForSelector(inputSelector);
   await newPage.focus(inputSelector); 
-  await newPage.keyboard.type("123456"); // Gib deine Matrikelnummer hier ein
+  await newPage.keyboard.type("12207319"); // Gib deine Matrikelnummer hier ein
 
   // Eingabe im Passwortfeld
   const passwordInputSelector = 'input[type="password"][accesskey="p"]';
   await newPage.waitForSelector(passwordInputSelector);
-  await newPage.type(passwordInputSelector, "Passwort123"); // Gib dein Passwort hier ein
+  await newPage.type(passwordInputSelector, "kbjP3yL/yd"); // Gib dein Passwort hier ein
 
   // Klicken auf den Login-Button
   const loginButtonSelector = 'input[type="submit"][accesskey="l"]';
@@ -110,7 +110,7 @@ if (popupElement) {
 
   });
 
-  await checkTimeAndLog(19 /*hours */, 8/*minutes */); // Trage hier die Uhrzeit ein
+  await checkTimeAndLog(13 /*hours */, 21/*minutes */, 5 /**seconds */); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     let attempts = 0;
