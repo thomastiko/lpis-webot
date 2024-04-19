@@ -82,7 +82,7 @@ if (popupElement) {
     for (const td of tdElements) {
       const spanElements = td.querySelectorAll("span");
       for (const span of spanElements) {
-        if (span.innerText.trim() === "Personal, Führung, Organisation") /*Trage den Namen der LV hier ein! */ {
+        if (span.innerText.trim() === "Grundlagen wissenschaftlichen Arbeitens") /*Trage den Namen der LV hier ein! */ {
           const lvAnmeldenLink = td.querySelector(
             'a[title="Lehrveranstaltungsanmeldung"]'
           );
@@ -102,7 +102,7 @@ if (popupElement) {
     const trElements = document.querySelectorAll("tr");
     for (const tr of trElements) {
       const aElement = tr.querySelector("td.ver_id a");
-      if (aElement && aElement.innerText.trim() === "4750") /* Trage die LV Nummer hier ein */ {
+      if (aElement && aElement.innerText.trim() === "5087") /* Trage die LV Nummer hier ein */ {
         return tr.outerHTML;
       }
     }
@@ -110,7 +110,7 @@ if (popupElement) {
 
   });
 
-  await checkTimeAndLog(13 /*hours */, 21/*minutes */, 5 /**seconds */); // Trage hier die Uhrzeit ein
+  //await checkTimeAndLog(16 /*hours */, 43/*minutes */, 30 /**seconds */); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     let attempts = 0;
@@ -119,7 +119,7 @@ if (popupElement) {
       const tempPage = await browser.newPage();
       await tempPage.setContent(parentElement);
       const submitButton = await tempPage.$(
-        'input[type="submit"][name="cmd"][value="anmelden"]'
+        'input[type="submit"]'
       );
       if (submitButton) {
         isDisabled = await tempPage.evaluate(
@@ -131,13 +131,14 @@ if (popupElement) {
           await tempPage.reload({ waitUntil: "networkidle0" });
           attempts++;
         } else {
-          await submitButton.click();
+          tempPage.click('input[type="submit"]');
           console.log("Clicked on the submit button.");
         }
       } else {
         console.log("Submit button not found.");
       }
-      await tempPage.close();
+      
+      //await tempPage.close();
     }
     if (attempts >= 10) {
       console.log("Max number of attempts reached. Submit button still disabled.");
