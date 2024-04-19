@@ -16,6 +16,35 @@ async function checkTimeAndLog(hour, minute, second) {
     }
   }
 }
+/**
+ * for speed enhancements this function
+ * intercepts all requests to depended, not
+ * needed files and prevents the download
+ */
+async function interceptRequests(page) {
+  console.log('intercept requests...');
+  page.on('request', interceptedRequest => {
+      const url = interceptedRequest.url();
+      if (url.indexOf('.png') !== -1
+      || url.indexOf('.jpg') !== -1
+      || url.indexOf('.css') !== -1
+      || url.indexOf('.ico') !== -1
+      || url.indexOf('.svg') !== -1
+      || url.indexOf('.js') !== -1
+      || url.indexOf('.gif') !== -1) {
+          interceptedRequest.respond({
+              status: 200,
+              body: "",
+            });
+      } else {
+          interceptedRequest.continue();
+      }
+  });
+  await page.setRequestInterception(true);
+}
+
+
+
 (async () => {
   const browser = await puppeteer.launch({
     headless: false,
@@ -77,6 +106,14 @@ if (popupElement) {
   await new Promise((resolve) => setTimeout(resolve, 3000)); 
   console.log("Waited for 3 seconds.");
 
+
+
+
+  await interceptRequests(newPage);
+
+
+  
+
   await newPage.evaluate(() => {
     const tdElements = document.querySelectorAll("td");
     for (const td of tdElements) {
@@ -95,14 +132,13 @@ if (popupElement) {
     return null;
   });
 
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-  console.log("Waited for 5 seconds.");
+  await newPage.waitForSelector('tr');
 
   const parentElement = await newPage.evaluate(() => {
     const trElements = document.querySelectorAll("tr");
     for (const tr of trElements) {
       const aElement = tr.querySelector("td.ver_id a");
-      if (aElement && aElement.innerText.trim() === "5087") /* Trage die LV Nummer hier ein */ {
+      if (aElement && aElement.innerText.trim() === "4593") /* Trage die LV Nummer hier ein */ {
         return tr.outerHTML;
       }
     }
@@ -110,35 +146,30 @@ if (popupElement) {
 
   });
 
-  //await checkTimeAndLog(16 /*hours */, 43/*minutes */, 30 /**seconds */); // Trage hier die Uhrzeit ein
+  await checkTimeAndLog (16 /*hours */, 31/*minutes */, 30 /**seconds */); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     let attempts = 0;
     let isDisabled = true;
     while (isDisabled && attempts < 10) {
-      const tempPage = await browser.newPage();
-      await tempPage.setContent(parentElement);
-      const submitButton = await tempPage.$(
-        'input[type="submit"]'
-      );
+      await newPage.setContent(parentElement); // Setze den HTML-Inhalt auf der aktuellen Seite
+      const submitButton = await newPage.$('input[type="submit"]'); // Suche den Submit-Button auf der aktuellen Seite
       if (submitButton) {
-        isDisabled = await tempPage.evaluate(
-          (button) => button.disabled,
-          submitButton
-        );
+        isDisabled = await newPage.evaluate((button) => button.disabled, submitButton); // Prüfe, ob der Button deaktiviert ist
         if (isDisabled) {
           console.log("Submit button is still disabled. Refreshing page...");
-          await tempPage.reload({ waitUntil: "networkidle0" });
+          
+          await newPage.reload(); // Aktualisiere die Seite, falls der Button deaktiviert ist
+          await newPage.waitForSelector('input[type="submit"]')
           attempts++;
         } else {
-          tempPage.click('input[type="submit"]');
+          await submitButton.click(); // Klicke auf den Submit-Button auf der aktuellen Seite
           console.log("Clicked on the submit button.");
         }
       } else {
-        console.log("Submit button not found.");
+        console.log("Submit button not found on the current page.");
       }
-      
-      //await tempPage.close();
+      // Füge hier ggf. eine Verzögerung ein, falls erforderlich
     }
     if (attempts >= 10) {
       console.log("Max number of attempts reached. Submit button still disabled.");
