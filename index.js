@@ -144,21 +144,21 @@ async function interceptRequests(page) {
     const trElements = document.querySelectorAll("tr");
     for (const tr of trElements) {
       const aElement = tr.querySelector("td.ver_id a");
-      if (aElement && aElement.innerText.trim() === "4593") {
+      if (aElement && aElement.innerText.trim() === "0266") {
         /* Trage die LV Nummer hier ein */ return tr.outerHTML;
       }
     }
     return null;
   });
 
-  await checkTimeAndLog (19 /*hours */, 40/*minutes */, 50 /**seconds */); // Trage hier die Uhrzeit ein
+  //await checkTimeAndLog (19 /*hours */, 40/*minutes */, 50 /**seconds */); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     const formId = parentElement.match(/id="([^"]+)"/)[1]; // Extrahieren der ID des Formulars
     let isDisabled = true;
     let attempts = 0;
     while (isDisabled && attempts < 10) {
-      await newPage.reload(); // Seite aktualisieren
+      await newPage.reload( {waitUntil: 'networkidle0'}); // Seite aktualisieren
       await newPage.waitForSelector(`form#${formId}`); // Warten auf das Formular
       const submitButton = await newPage.$(`form#${formId} input[type="submit"]`);
       if (submitButton) {
