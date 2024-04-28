@@ -9,6 +9,7 @@
   "author": "thomastiko",
   "license": "ISC",
   "dependencies": {
+    "jsdom": "^24.0.0",
     "puppeteer": "^22.6.0"
   }
 }
