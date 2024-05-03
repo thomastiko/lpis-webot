@@ -1,29 +1,28 @@
 const puppeteer = require("puppeteer");
-
-async function isCustomTime(hour, minute, second) {
+async function isCustomTime(hour, minute, second, millisecond) {
   const now = new Date();
   return (
     now.getHours() === hour &&
     now.getMinutes() === minute &&
-    now.getSeconds() === second
+    now.getSeconds() === second &&
+    now.getMilliseconds() >= millisecond
   );
 }
 
-
-async function checkTimeAndLog(hour, minute, second) {
+async function checkTimeAndLog(hour, minute, second, millisecond) {
   while (true) {
-    if (await isCustomTime(hour, minute, second)) {
+    if (await isCustomTime(hour, minute, second, millisecond)) {
       console.log(
         `It's ${hour}:${minute < 10 ? "0" + minute : minute}:${
           second < 10 ? "0" + second : second
-        } now!`
+        }:${millisecond < 10 ? "00" + millisecond : millisecond < 100 ? "0" + millisecond : millisecond} now!`
       );
       break;
     } else {
       console.log(
         `Current time is not ${hour}:${minute < 10 ? "0" + minute : minute}:${
           second < 10 ? "0" + second : second
-        }. Waiting...`
+        }:${millisecond < 10 ? "00" + millisecond : millisecond < 100 ? "0" + millisecond : millisecond}. Waiting...`
       );
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
@@ -144,14 +143,14 @@ async function interceptRequests(page) {
     const trElements = document.querySelectorAll("tr");
     for (const tr of trElements) {
       const aElement = tr.querySelector("td.ver_id a");
-      if (aElement && aElement.innerText.trim() === "0266") {
+      if (aElement && aElement.innerText.trim() === "4593") {
         /* Trage die LV Nummer hier ein */ return tr.outerHTML;
       }
     }
     return null;
   });
 
-  //await checkTimeAndLog (19 /*hours */, 40/*minutes */, 50 /**seconds */); // Trage hier die Uhrzeit ein
+  await checkTimeAndLog (19 /*hours */, 14/*minutes */, 30 /**seconds */, 900 /**millisekunden*/); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     const formId = parentElement.match(/id="([^"]+)"/)[1]; // Extrahieren der ID des Formulars
@@ -185,32 +184,4 @@ async function interceptRequests(page) {
     console.log("Eltern-Element nicht gefunden.");
   }
 
-  /*
-    let attempts = 0;
-    let isDisabled = true;
-    while (isDisabled && attempts < 10) {
-      //await newPage.setContent(parentElement); // Setze den HTML-Inhalt auf der aktuellen Seite
-      const submitButton = await newPage.$('input[type="submit"]'); // Suche den Submit-Button auf der aktuellen Seite
-      if (submitButton) {
-        isDisabled = await newPage.evaluate((button) => button.disabled, submitButton); // Prüfe, ob der Button deaktiviert ist
-        if (isDisabled) {
-          console.log("Submit button is still disabled. Refreshing page...");
-          
-          await newPage.reload(); // Aktualisiere die Seite, falls der Button deaktiviert ist
-          await newPage.waitForSelector('input[type="submit"]')
-          attempts++;
-        } else {
-          await submitButton.click(); // Klicke auf den Submit-Button auf der aktuellen Seite
-          console.log("Clicked on the submit button.");
-        }
-      } else {
-        console.log("Submit button not found on the current page.");
-      }
-      // Füge hier ggf. eine Verzögerung ein, falls erforderlich
-    }
-    if (attempts >= 10) {
-      console.log("Max number of attempts reached. Submit button still disabled.");
-    }*/
-
-  /* wenn alles eingestellt ist führe im Terminale node ./index.js aus */
 })();
