@@ -13,19 +13,26 @@ async function checkTimeAndLog(hour, minute, second, millisecond) {
   while (true) {
     if (await isCustomTime(hour, minute, second, millisecond)) {
       console.log(
-        `It's ${hour}:${minute < 10 ? "0" + minute : minute}:${
-          second < 10 ? "0" + second : second
+        `It's ${hour}:${minute < 10 ? "0" + minute : minute}:${second < 10 ? "0" + second : second
         }:${millisecond < 10 ? "00" + millisecond : millisecond < 100 ? "0" + millisecond : millisecond} now!`
       );
       break;
     } else {
       console.log(
-        `Current time is not ${hour}:${minute < 10 ? "0" + minute : minute}:${
-          second < 10 ? "0" + second : second
+        `Current time is not ${hour}:${minute < 10 ? "0" + minute : minute}:${second < 10 ? "0" + second : second
         }:${millisecond < 10 ? "00" + millisecond : millisecond < 100 ? "0" + millisecond : millisecond}. Waiting...`
       );
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
+  }
+}
+async function logCurrentTimeWithMilliseconds() {
+  while (true) {
+    const now = new Date();
+    console.log(
+      `Current time: ${now.getHours()}:${now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes()}:${now.getSeconds() < 10 ? "0" + now.getSeconds() : now.getSeconds()}:${now.getMilliseconds()}`
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 /**
@@ -150,14 +157,16 @@ async function interceptRequests(page) {
     return null;
   });
 
-  await checkTimeAndLog (19 /*hours */, 14/*minutes */, 30 /**seconds */, 900 /**millisekunden*/); // Trage hier die Uhrzeit ein
+  await checkTimeAndLog(19 /*hours */, 34/*minutes */, 30 /**seconds */, 800 /**millisekunden*/); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     const formId = parentElement.match(/id="([^"]+)"/)[1]; // Extrahieren der ID des Formulars
     let isDisabled = true;
     let attempts = 0;
     while (isDisabled && attempts < 10) {
-      await newPage.reload( {waitUntil: 'networkidle0'}); // Seite aktualisieren
+      const reloadStartTime = new Date(); // Startzeit des page.reload
+      console.log(`Starting page reload at: ${reloadStartTime.toLocaleTimeString()}.${reloadStartTime.getMilliseconds()}`); // Log-Nachricht mit der Startzeit des page.reload inklusive Millisekunden
+      await newPage.reload({ waitUntil: 'networkidle0' }); // Seite aktualisieren
       await newPage.waitForSelector(`form#${formId}`); // Warten auf das Formular
       const submitButton = await newPage.$(`form#${formId} input[type="submit"]`);
       if (submitButton) {
