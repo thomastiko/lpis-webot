@@ -22,7 +22,7 @@ async function checkTimeAndLog(hour, minute, second, millisecond) {
         `Current time is not ${hour}:${minute < 10 ? "0" + minute : minute}:${second < 10 ? "0" + second : second
         }:${millisecond < 10 ? "00" + millisecond : millisecond < 100 ? "0" + millisecond : millisecond}. Waiting...`
       );
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
   }
 }
@@ -109,12 +109,12 @@ async function interceptRequests(page) {
   const inputSelector = 'input[type="text"][accesskey="u"]';
   await newPage.waitForSelector(inputSelector);
   await newPage.focus(inputSelector);
-  await newPage.keyboard.type("12207319"); // Gib deine Matrikelnummer hier ein
+  await newPage.keyboard.type("12318754"); // Gib deine Matrikelnummer hier ein
 
   // Eingabe im Passwortfeld
   const passwordInputSelector = 'input[type="password"][accesskey="p"]';
   await newPage.waitForSelector(passwordInputSelector);
-  await newPage.type(passwordInputSelector, "kbjP3yL/yd"); // Gib dein Passwort hier ein
+  await newPage.type(passwordInputSelector, "saraWUsaraWU030105!"); // Gib dein Passwort hier ein
 
   // Klicken auf den Login-Button
   const loginButtonSelector = 'input[type="submit"][accesskey="l"]';
@@ -131,7 +131,7 @@ async function interceptRequests(page) {
       const spanElements = td.querySelectorAll("span");
       for (const span of spanElements) {
         if (
-          span.innerText.trim() === "Grundlagen wissenschaftlichen Arbeitens"
+          span.innerText.trim() === "Funktionsübergreifende Betriebswirtschaftslehre - Prozesse und Entscheidungen"
         ) {
           /*Trage den Namen der LV hier ein! */ const lvAnmeldenLink =
             td.querySelector('a[title="Lehrveranstaltungsanmeldung"]');
@@ -150,14 +150,14 @@ async function interceptRequests(page) {
     const trElements = document.querySelectorAll("tr");
     for (const tr of trElements) {
       const aElement = tr.querySelector("td.ver_id a");
-      if (aElement && aElement.innerText.trim() === "4593") {
+      if (aElement && aElement.innerText.trim() === "6269") {
         /* Trage die LV Nummer hier ein */ return tr.outerHTML;
       }
     }
     return null;
   });
 
-  await checkTimeAndLog(19 /*hours */, 34/*minutes */, 30 /**seconds */, 800 /**millisekunden*/); // Trage hier die Uhrzeit ein
+  await checkTimeAndLog(13 /*hours */, 59/*minutes */, 59 /**seconds */, 500 /**millisekunden*/); // Trage hier die Uhrzeit ein
 
   if (parentElement) {
     const formId = parentElement.match(/id="([^"]+)"/)[1]; // Extrahieren der ID des Formulars
